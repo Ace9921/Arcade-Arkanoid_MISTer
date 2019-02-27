@@ -108,7 +108,7 @@ parameter CONF_STR = {
 	"OD,Orientation,Vert,Horz;",
 	"-;",
 	"R0,Reset;",
-	"J,Fire,P1 Start,P1 Coin,P2 Start,P2 Coin;",
+	"J,Fire,Fast,P1 Start,P1 Coin,P2 Start,P2 Coin;",
 	"V,v",`BUILD_DATE
 };
 
@@ -223,7 +223,7 @@ begin
 
 	if (joy0[0] | joy0[1]) begin // 0.167us per cycle
 		if (spin_counter == 'd48000) begin// roughly 8ms to emulate 125hz standard mouse poll rate
-			position <= joy0[0] ? 12'd7 : -12'd7;
+			position <= joy0[0] ? (joy0[5] ? 12'd9 : 12'd4) : (joy0[5] ? -12'd9 : -12'd4);
 			spin_counter <= 0;
 		end else begin
 			spin_counter <= spin_counter + 1'b1;
@@ -329,16 +329,16 @@ arkanoid arkanoid_inst
 
 	.spinner(spinner_encoder),		// input [1:0] spinner
 	
-	.coin1(coin1 | joy0[6]),		// input coin1
-	.coin2(coin2 | joy0[8]),		// input coin2
+	.coin1(coin1 | joy0[7]),		// input coin1
+	.coin2(coin2 | joy0[9]),		// input coin2
 	
 	.btn_shot(btn_shot & ~joy0[4]),				// input btn_shot
 	.btn_service(btn_service),		// input btn_service
 	
 	.tilt(tilt),						// input tilt
 	
-	.btn_1p_start(btn_1p_start & ~joy0[5]),	// input btn_1p_start
-	.btn_2p_start(btn_2p_start & ~joy0[7]),	// input btn_2p_start
+	.btn_1p_start(btn_1p_start & ~joy0[6]),	// input btn_1p_start
+	.btn_2p_start(btn_2p_start & ~joy0[8]),	// input btn_2p_start
 	
 	.dip_sw(dip_sw),					// input [7:0] dip_sw
 	
