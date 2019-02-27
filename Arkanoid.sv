@@ -106,9 +106,9 @@ parameter CONF_STR = {
 	"OC,Sound chip,YM2149,AY-3-8910;",
 	"-;",
 	"OD,Orientation,Vert,Horz;",
-	"OGH,Buffering,Triple,Single,Low Latency;",
 	"-;",
 	"R0,Reset;",
+	"J,Fire,P1 Start,P1 Coin,P2 Start,P2 Coin;",
 	"V,v",`BUILD_DATE
 };
 
@@ -125,7 +125,7 @@ wire  [7:0] ioctl_dout;
 wire [10:0] ps2_key;
 wire [24:0] ps2_mouse;
 
-wire [15:0] joy_0, joy_1;
+wire [15:0] joy0;
 
 wire        forced_scandoubler;
 
@@ -145,8 +145,7 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.ioctl_addr(ioctl_addr),
 	.ioctl_dout(ioctl_dout),
 
-	.joystick_0(joy_0),
-	.joystick_1(joy_1),
+	.joystick_0(joy0),
 	.ps2_key(ps2_key),
 	.ps2_mouse(ps2_mouse)
 );
@@ -176,10 +175,12 @@ wire reset = buttons[1] | status[0] | ioctl_download;
 logic [1:0] spinner_encoder = 2'b11; //spinner encoder is a standard AB type encoder.  as it spins with will use the pattern 00, 01, 11, 10 and repeat.  when it spins the other way the pattern is reversed.
 
 wire signed [8:0] mouse_x_in = $signed({ps2_mouse[4], ps2_mouse[15:8]});
+
 always_ff @(posedge CLK_6M)
 begin
     reg old_state;
     reg old_mouse_clk;
+	integer spin_counter;
 
     reg signed  [8:0] mouse_x = 0;
 
@@ -205,11 +206,11 @@ begin
             endcase
             if(position[11])
             begin
-                position = position + 1;
+                position = position + 1'b1;
             end
             else 
             begin
-                position = position - 1;
+                position = position - 1'b1;
             end
         end
     end
@@ -219,6 +220,17 @@ begin
         if({position[11], mouse_x[8]}) position = position + mouse_x;
         else position = mouse_x;
     end
+
+	if (joy0[0] | joy0[1]) begin // 0.167us per cycle
+		if (spin_counter == 'd48000) begin// roughly 8ms to emulate 125hz standard mouse poll rate
+			position <= joy0[0] ? 12'd7 : -12'd7;
+			spin_counter <= 0;
+		end else begin
+			spin_counter <= spin_counter + 1'b1;
+		end
+	end else begin
+		spin_counter <= 0;
+	end
 end
 
 ///////////////////         Keyboard           //////////////////
@@ -317,16 +329,16 @@ arkanoid arkanoid_inst
 
 	.spinner(spinner_encoder),		// input [1:0] spinner
 	
-	.coin1(coin1),						// input coin1
-	.coin2(coin2),						// input coin2
+	.coin1(coin1 | joy0[6]),		// input coin1
+	.coin2(coin2 | joy0[8]),		// input coin2
 	
-	.btn_shot(btn_shot),				// input btn_shot
+	.btn_shot(btn_shot & ~joy0[4]),				// input btn_shot
 	.btn_service(btn_service),		// input btn_service
 	
 	.tilt(tilt),						// input tilt
 	
-	.btn_1p_start(btn_1p_start),	// input btn_1p_start
-	.btn_2p_start(btn_2p_start),	// input btn_2p_start
+	.btn_1p_start(btn_1p_start & ~joy0[5]),	// input btn_1p_start
+	.btn_2p_start(btn_2p_start & ~joy0[7]),	// input btn_2p_start
 	
 	.dip_sw(dip_sw),					// input [7:0] dip_sw
 	
