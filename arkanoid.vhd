@@ -545,7 +545,7 @@ signal ioctl_addr_in													: std_logic_vector(24 downto 0);
 signal ioctl_data_in													: std_logic_vector(7 downto 0);
 
 --VRAM signals
-signal vram_A															: std_logic_vector(10 downto 0);
+signal vram_A, vram_mux_A, vram_Z80_A							: std_logic_vector(10 downto 0);
 signal vram_D															: std_logic_vector(15 downto 0);
 signal vram_l_n_ce, vram_h_n_ce, vram_n_oe, vram_n_we		: std_logic;
 
@@ -1086,12 +1086,12 @@ begin
 	IC33: ls244
 	port map
 	(
-		n_g1 => clk_3m,
+		n_g1 => '0', --Directly modelled, keep permanently enabled
 		a1(3 downto 2) => z80_A(10 downto 9),
 		a1(1) => z80_A(11),
 		a1(0) => n_z80_A0,
-		y1(3 downto 2) => vram_A(9 downto 8),
-		y1(1) => vram_A(10),
+		y1(3 downto 2) => vram_Z80_A(9 downto 8),
+		y1(1) => vram_Z80_A(10),
 		y1(0) => z80_n_A0,
 		n_g2 => '0', --Directly modelled, keep permanently enabled
 		a2(3) => '1', --Unused input on edge connector, pull high
@@ -1220,21 +1220,21 @@ begin
 	IC41: ls244
 	port map
 	(
-		n_g1 => clk_3m,
+		n_g1 => '0', --Directly modelled, keep permanently enabled
 		a1 => z80_A(4 downto 1),
-		y1(3) => vram_A(3),
-		y1(2) => vram_A(2),
-		y1(1) => vram_A(1),
-		y1(0) => vram_A(0),
-		n_g2 => clk_3m,
+		y1(3) => vram_Z80_A(3),
+		y1(2) => vram_Z80_A(2),
+		y1(1) => vram_Z80_A(1),
+		y1(0) => vram_Z80_A(0),
+		n_g2 => '0', --Directly modelled, keep permanently enabled
 		a2(3) => z80_A(5),
 		a2(2) => z80_A(6),
 		a2(1) => z80_A(7),
 		a2(0) => z80_A(8),
-		y2(3) => vram_A(4),
-		y2(2) => vram_A(5),
-		y2(1) => vram_A(6),
-		y2(0) => vram_A(7)
+		y2(3) => vram_Z80_A(4),
+		y2(2) => vram_Z80_A(5),
+		y2(1) => vram_Z80_A(6),
+		y2(0) => vram_Z80_A(7)
 	);
 	
 	--IC42 is a 74LS245 used for transferring data between VRAM chips - omitted in favor of direct modeling of the
@@ -1393,7 +1393,7 @@ begin
 		d_out => spr_ram_A(3 downto 0),
 		n_rco => spr_ram_cnt_carry
 	);
-	--Multiplex ?
+	--Multiplex horizontal position
 	IC53: ls157
 	port map
 	(
@@ -1410,7 +1410,7 @@ begin
 		z => h_pos_mux(3 downto 0)
 	);
 	--Generate the following signals:
-	--?, enable for spinner counters, select line for sprite/background addresses
+	--NOR of dot signals, enable for spinner counters, select line for sprite/background addresses
 	--to sprite RAM
 	IC54: ls27
 	port map
@@ -1431,6 +1431,10 @@ begin
 	
 	--IC55 is a 74LS373 used to send data from VRAM to the Z80 - omitted in favor of a direct connection
 	--IC56 is a 74LS244 that sends data from the Z80 to VRAM - omitted in favor of a direct connection
+	
+	--Multiplex VRAM address lines based on 3MHz clock logic level
+	vram_A <= vram_Z80_A when not clk_3m
+			else vram_mux_A;
 	
 	--VRAM (upper 8 bits)
 	IC57: entity work.spram
@@ -1630,9 +1634,9 @@ begin
 		b(2) => hcnt4_xor,
 		b(1) => hcnt3_xor,
 		b(0) => hcnt2_xor,
-		out_ctl => n_clk_3m,
+		out_ctl => '0', --Directly modelled, keep permanently enabled
 		sel => h_cnt(7),
-		y => vram_A(3 downto 0)
+		y => vram_mux_A(3 downto 0)
 	);
 	--Multiplex background and sprite tile addresses for VRAM (A4 - A7)
 	IC71: ls257
@@ -1644,9 +1648,9 @@ begin
 		b(2) => vcnt3_xor,
 		b(1) => vcnt2_xor,
 		b(0) => hcnt6_xor,
-		out_ctl => n_clk_3m,
+		out_ctl => '0', --Directly modelled, keep permanently enabled
 		sel => h_cnt(7),
-		y => vram_A(7 downto 4)
+		y => vram_mux_A(7 downto 4)
 	);
 	--Multiplex background and sprite tile addresses for VRAM (A8 - A10)
 	IC72: ls257
@@ -1656,10 +1660,10 @@ begin
 		b(3 downto 2) => (others => '0'),
 		b(1) => vcnt6_xor,
 		b(0) => vcnt5_xor,
-		out_ctl => n_clk_3m,
+		out_ctl => '0', --Directly modelled, keep permanently enabled
 		sel => h_cnt(7),
 		--y(3) unused
-		y(2 downto 0) => vram_A(10 downto 8)
+		y(2 downto 0) => vram_mux_A(10 downto 8)
 	);
 	--Vertical counter (lower 4 bits)
 	IC73: ls161
