@@ -29,7 +29,7 @@ Place `*.rbf` and `a.arkanoid.rom` in the root of your SD card.
 1) The game contains an MC68705 MCU which is currently not implemented
 2) The required ROMs have a few bugs that the included IPS patch aims to correct, however, the difficulty settings have no effect, so the game is always on Hard difficulty
 3) Analog output is limited to native resolution and timings (240p at 59.18Hz)
-4) Horizontal resolution is incorrectly reported as 9x225 or 10x225
+4) Resolution is incorrectly reported as 9x225 or 10x225
 
 ## Building the ROM
 ### ****ATTENTION****
