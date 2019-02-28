@@ -302,7 +302,7 @@ wire hblank, vblank;
 wire hs, vs;
 wire [3:0] r,g,b;
 
-arcade_rotate_fx #(258,240,12,0) arcade_video
+arcade_rotate_fx #(258,225,12,0) arcade_video
 (
 	.*,
 
