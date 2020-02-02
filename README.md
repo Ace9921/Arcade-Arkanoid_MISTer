@@ -3,39 +3,13 @@ An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831, Sorgelig an
 
 ## Features
 - Modelling done at the chip level to match PCB behavior and logic as closely as possible
-- Mouse and keyboard controls
+- Spinner, joystick, mouse and keyboard controls
 - T80s CPU by Daniel Wallner with fixes by MikeJ, Sorgelig, and others
 - YM2149 core with volume table mixing by MikeJ for accurate mixing down to the PCB's audio distortion
 - Accurate audio filtering based on original PCB spectrum analysis
 
-## Changelog
-*v20190225*
--Initial release
-
-*v20190227*
--Change VRAM address multiplexing
--Change vertical resolution for arcade_rotate_fx
--Add controller support from Kitrinx
-
-*v20191228*
--Clock cleanup by Sorgelig
-
-*v20200126*
--Control overhaul by Sorgelig
--Native spinner support by 
--MRA support by Sorgelig
-
-*v20200201*
--Complete core rewrite from VHDL to SystemVerilog
--Add ROM loading
--Remove unused logic IC implementations
--Fix DC offset in digital audio output (thanks to Jotego for jt49_dcrm2 module)
--Reduce audio volume to better match other MISTer cores
--Add audio filtering to better match audio output from the original PCB (includes IIR filter by Soltan_G42)
--Fix aliasing in digital audio output
-
 ## Installation
-Place `*.rbf` and `a.arkanoid.rom` in the root of your SD card.
+Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.mra` into the "_Arcade" folder and ROM files into "_Arcade/mame".
 
 ## Controls
 ### Keyboard
@@ -43,30 +17,20 @@ Place `*.rbf` and `a.arkanoid.rom` in the root of your SD card.
 | --- | --- |
 | 1 | 1-Player Start |
 | 2 | 2-Player Start |
-| 5, 6 | Coin |
+| 5 | Coin |
 | 9 | Service Credit |
+| Left/Right arrow keys | Movement |
+| CTRL, Space | Fire |
+| ALT | Fast |
 
 ### Mouse
 | Mouse action | Function |
 | --- | --- |
-| Left button | Fire |
+| Left/Right button | Fire |
 | Left/Right | Movement |
 
 ## Known Issues
 1) The game contains an MC68705 MCU which is currently not implemented
-2) The required ROMs have a few bugs that the included IPS patch aims to correct, however, the difficulty settings have no effect, so the game is always on Hard difficulty
+2) The required ROMs have a few bugs that the MRA files aim to correct, however, the difficulty settings have no effect, so the game is always on Hard difficulty
 3) Analog output is limited to native resolution and timings (240p at 59.18Hz)
 4) Resolution is incorrectly reported as 224x265
-
-## Building the ROM
-### ****ATTENTION****
-No ROMs are included.  In order to use this arcade core, you need to provide the
-correct ROM files.
-
-1) Place BAT file, IPS patch, flips.exe and 7za.exe from releases folder into a folder.
-2) Execute BAT file - the names of the required ZIP files will be displayed.
-3) Locate the previously-mentioned ZIP files.  You need to find the exact files required. Do not rename other ZIP files even if they also represent the same game - they are not compatible!
-   The ZIP file names are taken from the M.A.M.E. project, so you can get more info about hashes and contained files there.
-4) Place the required ZIP files into the same folder and execute the BAT file again.
-5) If no errors or warnings occur, a ROM file will be created in the folder.
-6) Place the ROM file into root of SD card.
