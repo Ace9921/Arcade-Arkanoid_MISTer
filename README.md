@@ -9,7 +9,7 @@ An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831, Sorgelig an
 - Accurate audio filtering based on original PCB spectrum analysis
 
 ## Installation
-Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.mra` into the "_Arcade" folder and ROM files into "_Arcade/mame".
+Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.mra` into the "_Arcade" folder and ROM files from MAME into "_Arcade/mame".
 
 ## Controls
 ### Keyboard
