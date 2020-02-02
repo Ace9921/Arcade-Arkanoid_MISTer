@@ -41,7 +41,7 @@ begin
 		elsif(re = '1') then
 			q <= ram(to_integer(unsigned(addr)));
 		else
-			q <= (others => 'Z');
+			q <= (others => '1');
 		end if;
 	end if;
 	end process;

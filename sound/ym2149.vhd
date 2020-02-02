@@ -72,7 +72,7 @@ entity YM2149 is
   I_BC1               : in  std_logic;
   I_SEL_L             : in  std_logic;
 
-  O_AUDIO             : out std_logic_vector(7 downto 0);
+  O_AUDIO             : out std_logic_vector(9 downto 0);
   -- port a
   I_IOA               : in  std_logic_vector(7 downto 0);
   O_IOA               : out std_logic_vector(7 downto 0);
@@ -269,7 +269,7 @@ begin
     end if;
   end process;
 
-  p_rdata                : process(busctrl_re, addr, reg)
+  p_rdata                : process(busctrl_re, addr, reg, ioa_inreg, iob_inreg)
   begin
     O_DA <= (others => '1'); -- 'X'
     if (busctrl_re = '1') then -- not necessary, but useful for putting 'X's in the simulator
@@ -414,7 +414,7 @@ begin
     end if;
   end process;
 
-  p_envelope_shape       : process(env_reset, CLK)
+  p_envelope_shape       : process(env_reset, CLK, reg)
     variable is_bot    : boolean;
     variable is_bot_p1 : boolean;
     variable is_top_m1 : boolean;
@@ -558,9 +558,9 @@ begin
     wait until rising_edge(CLK);
 
     if (RESET_L = '0') then
-      O_AUDIO(7 downto 0) <= "00000000";
+      O_AUDIO <= "0000000000";
     else
-      O_AUDIO(7 downto 0) <= vol_table_out(9 downto 2);
+      O_AUDIO <= vol_table_out;
     end if;
   end process;
 

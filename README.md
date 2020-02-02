@@ -1,11 +1,38 @@
 # Arkanoid for [MISTer](https://github.com/MiSTer-devel/Main_MiSTer/wiki)
-An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831 and Kitrinx
+An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831, Sorgelig and Kitrinx
 
 ## Features
 - Modelling done at the chip level to match PCB behavior and logic as closely as possible
 - Mouse and keyboard controls
 - T80s CPU by Daniel Wallner with fixes by MikeJ, Sorgelig, and others
 - YM2149 core with volume table mixing by MikeJ for accurate mixing down to the PCB's audio distortion
+- Accurate audio filtering based on original PCB spectrum analysis
+
+## Changelog
+*v20190225*
+-Initial release
+
+*v20190227*
+-Change VRAM address multiplexing
+-Change vertical resolution for arcade_rotate_fx
+-Add controller support from Kitrinx
+
+*v20191228*
+-Clock cleanup by Sorgelig
+
+*v20200126*
+-Control overhaul by Sorgelig
+-Native spinner support by 
+-MRA support by Sorgelig
+
+*v20200201*
+-Complete core rewrite from VHDL to SystemVerilog
+-Add ROM loading
+-Remove unused logic IC implementations
+-Fix DC offset in digital audio output (thanks to Jotego for jt49_dcrm2 module)
+-Reduce audio volume to better match other MISTer cores
+-Add audio filtering to better match audio output from the original PCB (includes IIR filter by Soltan_G42)
+-Fix aliasing in digital audio output
 
 ## Installation
 Place `*.rbf` and `a.arkanoid.rom` in the root of your SD card.
@@ -29,7 +56,7 @@ Place `*.rbf` and `a.arkanoid.rom` in the root of your SD card.
 1) The game contains an MC68705 MCU which is currently not implemented
 2) The required ROMs have a few bugs that the included IPS patch aims to correct, however, the difficulty settings have no effect, so the game is always on Hard difficulty
 3) Analog output is limited to native resolution and timings (240p at 59.18Hz)
-4) Resolution is incorrectly reported as 9x225 or 10x225
+4) Resolution is incorrectly reported as 224x265
 
 ## Building the ROM
 ### ****ATTENTION****
