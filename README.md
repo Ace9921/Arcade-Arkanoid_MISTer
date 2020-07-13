@@ -1,5 +1,5 @@
-# Arkanoid for [MISTer](https://github.com/MiSTer-devel/Main_MiSTer/wiki)
-An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831, Sorgelig and Kitrinx
+# Arkanoid for [MiSTer](https://github.com/MiSTer-devel/Main_MiSTer/wiki)
+An FPGA implementation of Arkanoid by Ace, ElectronAsh, Enforcer, Sorgelig and Kitrinx
 
 ## Features
 - Modelling done at the chip level to match PCB behavior and logic as closely as possible
@@ -9,7 +9,21 @@ An FPGA implementation of Arkanoid by Ace, ElectronAsh, enforcer831, Sorgelig an
 - Accurate audio filtering based on original PCB spectrum analysis
 
 ## Installation
-Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.mra` into the "_Arcade" folder and ROM files from MAME into "_Arcade/mame".
+Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.mra` into the "_Arcade" folder and ROM files from MAME into "games/mame".
+
+### ****ATTENTION****
+ROMs are not included. In order to use this arcade core, you must provide the correct ROMs.
+
+To simplify the process, .mra files are provided in the releases folder that specify the required ROMs along with their checksums.  The ROM's .zip filename refers to the corresponding file in the M.A.M.E. project.
+
+Please refer to https://github.com/MiSTer-devel/Main_MiSTer/wiki/Arcade-Roms for information on how to setup and use the environment.
+
+Quick reference for folders and file placement:
+
+/_Arcade/<game name>.mra
+/_Arcade/cores/<game rbf>.rbf
+/games/mame/<mame rom>.zip
+/games/hbmame/<hbmame rom>.zip
 
 ## Controls
 ### Keyboard
@@ -31,6 +45,6 @@ Place `*.rbf` into the "_Arcade/cores" folder on your SD card.  Then, place `*.m
 
 ## Known Issues
 1) The game contains an MC68705 MCU which is currently not implemented
-2) The required ROMs have a few bugs that the MRA files aim to correct, however, the difficulty settings have no effect, so the game is always on Hard difficulty
-3) Analog output is limited to native resolution and timings (240p at 59.18Hz)
-4) Resolution is incorrectly reported as 224x265
+2) The required ROMs have a few bugs that the MRA files aim to correct, however, the Easy difficulty setting has inaccurate enemy spawns
+3) Resolution is incorrectly reported as 256x225
+
